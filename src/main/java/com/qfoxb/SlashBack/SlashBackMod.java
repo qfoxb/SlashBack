@@ -1,4 +1,4 @@
-package com.qfoxb.backcommandmod;
+package com.qfoxb.slashback;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -17,8 +17,8 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "backcommandmod", name = "Back Command Mod", version = "1.0")
-public class BackCommandMod {
+@Mod(modid = "slashback", name = "Back Command Mod", version = "1.0")
+public class SlashBackMod {
 
     private static final Map<String, BlockPos> lastDeathPositions = new HashMap<>();
 

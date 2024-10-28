@@ -1,7 +1,7 @@
 [
 {
-  "modid": "backcommandmod",
-  "name": "Back Command Mod",
+  "modid": "slashback",
+  "name": "Back Command port from Essentials",
   "description": "Adds a /back command to return to your death point",
   "version": "${version}",
   "mcversion": "${mcversion}",
