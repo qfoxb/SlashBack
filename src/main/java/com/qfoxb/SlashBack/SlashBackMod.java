@@ -1,4 +1,5 @@
 package com.qfoxb.slashback;
+
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -12,12 +13,13 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.server.permission.PermissionAPI;
+import net.minecraftforge.server.permission.DefaultPermissionLevel;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "slashback", name = "SlashBack", version = "1.0")
+@Mod(modid = "slashback", name = "SlashBack", version = "2.0", acceptableRemoteVersions = "*", serverSideOnly = true)
 public class SlashBackMod {
 
     private static final Map<String, BlockPos> lastDeathPositions = new HashMap<>();
@@ -25,6 +27,7 @@ public class SlashBackMod {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
+        PermissionAPI.registerNode("slashback.back", DefaultPermissionLevel.ALL, "Allows use of the /back command");
     }
 
     @Mod.EventHandler
@@ -62,12 +65,23 @@ public class SlashBackMod {
                 } else {
                     player.sendMessage(new TextComponentString("No recorded death position found."));
                 }
+            } else {
+                sender.sendMessage(new TextComponentString("This command can only be used by players."));
             }
         }
 
         @Override
         public int getRequiredPermissionLevel() {
-            return 0;
+            return 0; // Allow all players to use the command
+        }
+
+        @Override
+        public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+            if (sender instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) sender;
+                return PermissionAPI.hasPermission(player, "slashback.back");
+            }
+            return false;
         }
     }
 }
