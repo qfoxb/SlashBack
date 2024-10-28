@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "slashback", name = "Back Command Mod", version = "1.0")
+@Mod(modid = "slashback", name = "SlashBack", version = "1.0")
 public class SlashBackMod {
 
     private static final Map<String, BlockPos> lastDeathPositions = new HashMap<>();
