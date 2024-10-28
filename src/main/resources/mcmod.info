@@ -1,0 +1,16 @@
+[
+{
+  "modid": "backcommandmod",
+  "name": "Back Command Mod",
+  "description": "Adds a /back command to return to your death point",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["qfoxb"],
+  "credits": "qfoxb,
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
