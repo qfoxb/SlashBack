@@ -1,0 +1,11 @@
+*
+!src/
+!src/**
+!README.md
+src/main/resources/pack.mcmeta
+!build.gradle
+!.github/
+!.github/workflows/
+!.github/workflows/**
+!.gitignore
+!.gitattributes
