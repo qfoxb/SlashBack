@@ -1,0 +1,42 @@
+name: Build SlashBack
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build --no-daemon
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: SlashBack-artifacts
+          path: |
+            build/libs/*.jar
+            # any other outputs you want to save
+
+      - name: Run tests (if applicable)
+        run: ./gradlew test --no-daemon
