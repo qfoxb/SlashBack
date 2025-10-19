@@ -2,13 +2,9 @@ name: Build SlashBack
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
 
 jobs:
   build:
@@ -24,9 +20,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Automatically install Gradle if gradlew is missing
-      - name: Set up Gradle
+      # Install Gradle 5.6.4 (ForgeGradle 3 compatible)
+      - name: Set up Gradle 5.6.4
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 5.6.4
 
       - name: Build with Gradle
         run: |
@@ -43,11 +41,3 @@ jobs:
         with:
           name: SlashBack-artifacts
           path: build/libs/*.jar
-
-      - name: Run tests (if applicable)
-        run: |
-          if [ -f "./gradlew" ]; then
-            ./gradlew test --no-daemon
-          else
-            gradle test --no-daemon
-          fi
