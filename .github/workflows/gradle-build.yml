@@ -28,9 +28,9 @@ jobs:
       - name: Build with Gradle
         run: gradle clean build --no-daemon
 
-      - name: Archive build artifacts
+      - name: Upload built JAR
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: SlashBack-artifacts
+          name: SlashBack.jar
           path: build/libs/*.jar
