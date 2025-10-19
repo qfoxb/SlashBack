@@ -6,7 +6,9 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -19,10 +21,10 @@ import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "slashback", name = "SlashBack", version = "2.0", acceptableRemoteVersions = "*", serverSideOnly = true)
+@Mod(modid = "slashback", name = "SlashBack", version = "2.1", acceptableRemoteVersions = "*", serverSideOnly = true)
 public class SlashBackMod {
 
-    private static final Map<String, BlockPos> lastDeathPositions = new HashMap<>();
+    private static final Map<String, DeathLocation> lastDeathLocations = new HashMap<>();
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -39,7 +41,17 @@ public class SlashBackMod {
     public void onPlayerDeath(LivingDeathEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
-            lastDeathPositions.put(player.getName(), player.getPosition());
+            lastDeathLocations.put(player.getName(), new DeathLocation(player.dimension, player.getPosition()));
+        }
+    }
+
+    private static class DeathLocation {
+        final int dimension;
+        final BlockPos pos;
+
+        DeathLocation(int dimension, BlockPos pos) {
+            this.dimension = dimension;
+            this.pos = pos;
         }
     }
 
@@ -58,10 +70,24 @@ public class SlashBackMod {
         public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
             if (sender instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) sender;
-                BlockPos deathPos = lastDeathPositions.get(player.getName());
-                if (deathPos != null) {
-                    player.setPositionAndUpdate(deathPos.getX() + 0.5, deathPos.getY(), deathPos.getZ() + 0.5);
-                    player.sendMessage(new TextComponentString("Teleported to your last death position."));
+                DeathLocation deathLoc = lastDeathLocations.get(player.getName());
+
+                if (deathLoc != null) {
+                    if (player.dimension != deathLoc.dimension) {
+                        // Cross-dimension teleport
+                        WorldServer targetWorld = DimensionManager.getWorld(deathLoc.dimension);
+                        if (targetWorld != null) {
+                            player.changeDimension(deathLoc.dimension);
+                            player.setPositionAndUpdate(deathLoc.pos.getX() + 0.5, deathLoc.pos.getY(), deathLoc.pos.getZ() + 0.5);
+                            player.sendMessage(new TextComponentString("Teleported to your last death in dimension " + deathLoc.dimension + "."));
+                        } else {
+                            player.sendMessage(new TextComponentString("That dimension isn't loaded!"));
+                        }
+                    } else {
+                        // Same dimension
+                        player.setPositionAndUpdate(deathLoc.pos.getX() + 0.5, deathLoc.pos.getY(), deathLoc.pos.getZ() + 0.5);
+                        player.sendMessage(new TextComponentString("Teleported to your last death position."));
+                    }
                 } else {
                     player.sendMessage(new TextComponentString("No recorded death position found."));
                 }
