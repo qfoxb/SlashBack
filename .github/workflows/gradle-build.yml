@@ -14,26 +14,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 8
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 8
 
-      # Install Gradle 5.6.4 (ForgeGradle 3 compatible)
       - name: Set up Gradle 5.6.4
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 5.6.4
 
       - name: Build with Gradle
-        run: |
-          if [ -f "./gradlew" ]; then
-            chmod +x ./gradlew
-            ./gradlew clean build --no-daemon
-          else
-            gradle clean build --no-daemon
-          fi
+        run: gradle clean build --no-daemon
 
       - name: Archive build artifacts
         if: success()
